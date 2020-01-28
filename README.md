@@ -1,6 +1,6 @@
 # Dice Game
 
-Made with React and Typesript
+Made with React and Typescript
 
 GAME RULES:
 

@@ -16,6 +16,7 @@ interface MyState {
   gamePlaying: boolean;
   current_1: number;
   current_2: number;
+  winningScore: number
 }
 
 class App extends React.PureComponent<MyProps, MyState> {
@@ -34,7 +35,8 @@ class App extends React.PureComponent<MyProps, MyState> {
       activePlayer: 0,
       gamePlaying: true,
       current_1: 0,
-      current_2: 0
+      current_2: 0,
+      winningScore: 50
     }
     this.rollDice = this.rollDice.bind(this)
     this.hold = this.hold.bind(this)
@@ -44,13 +46,18 @@ class App extends React.PureComponent<MyProps, MyState> {
 
   }
 
+  componentDidUpdate(a: any, b: any, c: any) {
+    //console.log(a, b, c);
+    this.checkWinner()
+  }
+
   rollDice = () => {
-    console.log("roll")
+    //console.log("roll")
     if (this.state.gamePlaying) {
       let dice = Math.floor(Math.random() * 6) + 1
       let diceCurrent = `/assets/i/dice-${dice}.png`
 
-      console.log(dice)
+      //console.log(dice)
 
       if (dice !== 1) {
 
@@ -75,7 +82,7 @@ class App extends React.PureComponent<MyProps, MyState> {
         this.nextPlayer()
       }
     }
-    console.log(this.state.current_1, this.state.current_2)
+    //console.log(this.state.current_1, this.state.current_2)
   }
 
   nextPlayer = () => {
@@ -98,28 +105,27 @@ class App extends React.PureComponent<MyProps, MyState> {
 
   checkWinner = () => {
 
-    if (this.state.current_1 >= 20) {
+    if (this.state.player_1 >= this.state.winningScore) {
       this.setState({
         diceCurrent: "/assets/i/dice-blank.png",
         player_1_label: "WINNER!",
         player_2_label: "L0SER!",
         gamePlaying: false
       })
-      return
-
-    } else if (this.state.current_2 >= 20) {
+      //return console.log("player 1 wins")
+    } else if (this.state.player_2 >= this.state.winningScore) {
       this.setState({
         diceCurrent: "/assets/i/dice-blank.png",
         player_2_label: "WINNER!",
         player_1_label: "L0SER!",
         gamePlaying: false
       })
-      return
+      //return console.log("player 2 wins")
     }
   }
 
   hold = () => {
-    console.log("hold")
+    //console.log("hold")
 
     if (this.state.gamePlaying) {
 
@@ -132,7 +138,6 @@ class App extends React.PureComponent<MyProps, MyState> {
           current_1: 0,
           roundScore: 0
         })
-        this.checkWinner()
 
       } else {
 
@@ -143,9 +148,11 @@ class App extends React.PureComponent<MyProps, MyState> {
           current_2: 0,
           roundScore: 0
         })
-        this.checkWinner()
+
       }
-      console.log(this.state)
+      //console.log(this.state)
+
+
     } else {
 
       this.nextPlayer();
@@ -175,7 +182,7 @@ class App extends React.PureComponent<MyProps, MyState> {
       <div className="App">
         <div className="wrapper clearfix">
 
-          <div className={this.state.activePlayer === 0 ? "player-0-panel active" : "player-0-panel"}>
+          <div className={this.state.activePlayer === 0 && this.state.gamePlaying ? "player-0-panel active" : "player-0-panel"}>
             <div className="player-name" id="name-0">{this.state.player_1_label}</div>
             <div className="player-score" id="score-0">{this.state.player_1}</div>
             <div className="player-current-box">
@@ -184,7 +191,7 @@ class App extends React.PureComponent<MyProps, MyState> {
             </div>
           </div>
 
-          <div className={this.state.activePlayer === 1 ? "player-1-panel active" : "player-1-panel"}>
+          <div className={this.state.activePlayer === 1 && this.state.gamePlaying ? "player-1-panel active" : "player-1-panel"}>
             <div className="player-name" id="name-1">{this.state.player_2_label}</div>
             <div className="player-score" id="score-1">{this.state.player_2}</div>
             <div className="player-current-box">
